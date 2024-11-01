@@ -28,7 +28,6 @@ public class DatabaseService {
         }
     }
 
-    // Method to retrieve table columns and a single row of data
     public List<List<String>> getUserTableData(String dbIpAddress, int dbPort, String username, String password, String databaseName, int start, int end, String tableName) throws SQLException {
         String jdbcUrl = String.format("jdbc:postgresql://%s:%d/%s", dbIpAddress, dbPort, databaseName);
         List<List<String>> data = new ArrayList<>();

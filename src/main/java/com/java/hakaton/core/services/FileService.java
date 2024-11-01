@@ -1,4 +1,4 @@
-package com.java.hakaton.service;
+package com.java.hakaton.core.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;

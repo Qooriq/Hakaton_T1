@@ -1,4 +1,4 @@
-package com.java.hakaton;
+package com.java.hakaton.core.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,7 +1,7 @@
-package com.java.hakaton.controller;
+package com.java.hakaton.core.controllers;
 
-import com.java.hakaton.SocketConnectionService;
-import com.java.hakaton.service.FileService;
+import com.java.hakaton.core.services.SocketConnectionService;
+import com.java.hakaton.core.services.FileService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
@@ -42,16 +42,14 @@ public class FileUploadController {
         }
     }
 
-    @PostMapping
     @SneakyThrows
-    @RequestMapping(value = "/uploadDb")
+    @PostMapping(value = "/uploadDb")
     public @ResponseBody ResponseEntity<String> handleConnection(@RequestParam String dbIndicator, @RequestParam String indicator,
-                                                                 @RequestParam String dbIpAddress,
-                                                                 @RequestParam int start, @RequestParam int end,
-                                                                 @RequestParam String[] fields,
-                                                                 @RequestParam String url, @RequestParam String dbName,
+                                                                 @RequestParam int port,
+                                                                 @RequestParam String dbIpAddress, @RequestParam String dbName, @RequestParam String tableName,
                                                                  @RequestParam String username, @RequestParam String password) {
-        socketConnectionService.sendDataToNodes(dbIndicator, indicator, dbIpAddress, start, end, fields, url, dbName, username, password);
+/*        socketConnectionService.sendDataToNodes(dbIpAddress, port, tableName, username, password, dbName, dbIndicator, indicator);*/
+        socketConnectionService.sendDataToNodes("10.1.44.64", 5432 , "users", "wayzap", "F872G5g778M", "hakaton", "0", "1");
         return ResponseEntity.ok("Connection established");
     }
 
