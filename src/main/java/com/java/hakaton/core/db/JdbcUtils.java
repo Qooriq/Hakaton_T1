@@ -1,15 +1,29 @@
 package com.java.hakaton.core.db;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import org.springframework.stereotype.Service;
 
+import java.sql.*;
+
+@Service
 public class JdbcUtils {
-//make n sockets
-    //im gettinng cluster number and cluster ipadresses and then divide eddata from tanble equally to this clasters
-    /**
-     * code
-     */
 
+    public int getUserTableSize(String dbIpAddress, int dbPort, String username, String password, String databaseName) {
+        String jdbcUrl = String.format("jdbc:postgresql://%s:%d/%s", dbIpAddress, dbPort, databaseName);
+
+        try (Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) AS table_size FROM users")) {  // Use users table name
+
+            if (resultSet.next()) {
+                return resultSet.getInt("table_size");
+            } else {
+                System.err.println("Failed to retrieve table size. Result set is empty.");
+                return -1;
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error retrieving table size: " + e.getMessage());
+            return -1;
+        }
+    }
 }

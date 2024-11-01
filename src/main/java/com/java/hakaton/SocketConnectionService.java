@@ -1,40 +1,38 @@
 package com.java.hakaton;
 
+import org.springframework.stereotype.Service;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.sql.Connection;
 import java.util.List;
 
+@Service
 public class SocketConnectionService {
     private MyConfig config = new MyConfig();
 
-    public getUserTableSize() {
-        Connection connection =
-    }
+    public boolean sendInfoToSocket(String databaseIndicator, String indicator, String dbIpAddress, int dbPort, String username, String password,
+                                    String databaseName, int start, int end, String[] fields, String tableName, ClusterNode node) {
 
-
-    public boolean sendInfoToSocket(String databaseIndicator, String dbIpAddress, int dbPort, String username, String password,
-                                    String databaseName, int start, int end, String[] fields, ) {
-
-        // todo implemtn password hashing
-        //dbIndicator = 0
-        //can be 1
-        try (Socket socket = new Socket(ipAddress, port);
+        try (Socket socket = new Socket(node.getIp(), node.getPort());
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
 
             StringBuilder message = new StringBuilder(databaseIndicator + " ");
-            message.append(ipAddress).append(" ");
-            message.append(port).append(" ");
+            message.append(indicator).append(" ");
+            message.append(dbIpAddress).append(" ");
+            message.append(dbPort).append(" ");
             message.append(username).append(" ");
-            message.append(password).append(" ");
+            message.append(password).append(" "); // TODO: Implement password hashing!!!
             message.append(databaseName).append(" ");
             message.append(start).append(" ");
             message.append(end).append(" ");
+            message.append(tableName).append(" "); // Add table name to the message
 
             for (String field : fields) {
                 message.append(field).append(" ");
             }
+
             out.println(message.toString().trim());
             return true;
 
@@ -44,7 +42,7 @@ public class SocketConnectionService {
         }
     }
 
-    public void sendDataToNodes(Integer tableSize, String username, String password, String databaseName, String databaseIndicator, String[] fields) {
+    public void sendDataToNodes(String dbIpAddress, int dbPort, String tableName, Integer tableSize, String username, String password, String databaseName, String databaseIndicator, String indicator, String[] fields) {
         List<ClusterNode> nodes = config.getNodes();
         int numNodes = nodes.size();
 
@@ -55,8 +53,9 @@ public class SocketConnectionService {
         for (ClusterNode node : nodes) {
             int currentChunkSize = chunkSize + (nodes.indexOf(node) < remainder ? 1 : 0);
             int end = start + currentChunkSize;
-            boolean success = sendInfoToSocket(databaseIndicator, node.getIp(), node.getPort(), username, password, databaseName, start, end, fields);
-            // TODO make logging
+
+            boolean success = sendInfoToSocket(databaseIndicator, indicator, dbIpAddress, dbPort, username, password, databaseName, start, end, fields, tableName, node);
+
             if (!success) {
                 System.err.println("Failed to send data to node: " + node.getIp() + ":" + node.getPort());
             }
