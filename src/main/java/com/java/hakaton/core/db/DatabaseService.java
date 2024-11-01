@@ -5,11 +5,9 @@ import org.springframework.stereotype.Service;
 import java.sql.*;
 
 @Service
-public class JdbcUtils {
-
+public class DatabaseService {
     public int getUserTableSize(String dbIpAddress, int dbPort, String username, String password, String databaseName) {
         String jdbcUrl = String.format("jdbc:postgresql://%s:%d/%s", dbIpAddress, dbPort, databaseName);
-
         try (Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
              Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) AS table_size FROM users")) {  // Use users table name

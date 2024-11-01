@@ -1,15 +1,21 @@
 package com.java.hakaton;
 
+import com.java.hakaton.core.db.DatabaseService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.sql.Connection;
 import java.util.List;
 
 @Service
 public class SocketConnectionService {
+
+    @Autowired
+    DatabaseService databaseService;
+
+    @Autowired
     private MyConfig config = new MyConfig();
 
     public boolean sendInfoToSocket(String databaseIndicator, String indicator, String dbIpAddress, int dbPort, String username, String password,
@@ -42,8 +48,9 @@ public class SocketConnectionService {
         }
     }
 
-    public void sendDataToNodes(String dbIpAddress, int dbPort, String tableName, Integer tableSize, String username, String password, String databaseName, String databaseIndicator, String indicator, String[] fields) {
+    public void sendDataToNodes(String dbIpAddress, int dbPort/* String tableName */, String username, String password, String databaseName, String databaseIndicator, String indicator, String[] fields) {
         List<ClusterNode> nodes = config.getNodes();
+        int tableSize  = databaseService.getUserTableSize(dbIpAddress, dbPort, username, password, databaseName);
         int numNodes = nodes.size();
 
         int chunkSize = tableSize / numNodes;
