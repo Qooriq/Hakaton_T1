@@ -19,7 +19,7 @@ public class SocketConnectionService {
     private MyConfig config = new MyConfig();
 
     public boolean sendInfoToSocket(String databaseIndicator, String indicator, String dbIpAddress, int dbPort, String username, String password,
-                                    String databaseName, int start, int end, String[] fields, String tableName, ClusterNode node) {
+                                    String databaseName, int start, int end, String[] fields/* String tableName*/, ClusterNode node) {
 
         try (Socket socket = new Socket(node.getIp(), node.getPort());
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
@@ -33,7 +33,7 @@ public class SocketConnectionService {
             message.append(databaseName).append(" ");
             message.append(start).append(" ");
             message.append(end).append(" ");
-            message.append(tableName).append(" "); // Add table name to the message
+/*            message.append(tableName).append(" ");*/ // Add table name to the message
 
             for (String field : fields) {
                 message.append(field).append(" ");
@@ -61,7 +61,7 @@ public class SocketConnectionService {
             int currentChunkSize = chunkSize + (nodes.indexOf(node) < remainder ? 1 : 0);
             int end = start + currentChunkSize;
 
-            boolean success = sendInfoToSocket(databaseIndicator, indicator, dbIpAddress, dbPort, username, password, databaseName, start, end, fields, tableName, node);
+            boolean success = sendInfoToSocket(databaseIndicator, indicator, dbIpAddress, dbPort, username, password, databaseName, start, end, fields, node);
 
             if (!success) {
                 System.err.println("Failed to send data to node: " + node.getIp() + ":" + node.getPort());
