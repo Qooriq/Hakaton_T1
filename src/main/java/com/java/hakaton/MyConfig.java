@@ -10,7 +10,8 @@ import java.util.List;
 @EnableConfigurationProperties
 @ConfigurationProperties(prefix = "nodes")
 public class MyConfig {
-    private List<ClusterNode> nodes;
+    private List<ClusterNode> nodes = List.of(new ClusterNode("name1", "192.168.100.1", 5054)
+            , new ClusterNode("name2", "192.168.100.2", 5055));
 
     public List<ClusterNode> getNodes() {
         return nodes;
